@@ -1,0 +1,3 @@
+sqlite:
+  drv: !expr RSQLite::SQLite()
+  dbname: !expr tempfile()
