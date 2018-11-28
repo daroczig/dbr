@@ -133,3 +133,48 @@ db_refresh <- function(x) {
     assert_attr(x, 'statement')
     with(attributes(x), db_query(statement, db))
 }
+
+
+
+#' Insert rows into a database table
+#' @param df data.frame
+#' @param table character vector of an optional schema and table name
+#' @inheritParams db_close
+#' @param ... further parameters passed to \code{dbWriteTable}, eg to modify \code{row.names} or \code{append} (depends on driver)
+#' @seealso \code{RMySQL::\link[RMySQL]{dbWriteTable}}, \code{RPostgreSQL::\link[RPostgreSQL]{dbReadTable-methods}}
+#' @importFrom DBI dbWriteTable
+#' @importFrom checkmate assert_character
+#' @export
+#' @seealso \code{\link{db_append}}
+#' @examples \dontrun{
+#' options('db_config_path' = system.file('db_config.yml', package = 'dbr'))
+#' db_insert(mtcars, 'mtcars', 'sqlite')
+#' db_append(mtcars, c('dm', 'mtcars'), 'sqlite')
+#' }
+db_insert <- function(df, table, db, ...) {
+
+    if (!is.object(db)) {
+        db <- db_connect(db)
+        on.exit({
+          db_close(db)
+        })
+    }
+
+    assert_data_frame(df)
+    assert_character(table, min.len = 1)
+    assert_attr(db, 'db')
+
+    flog.info('Inserting {nrow(df)} rows into {paste(table, collapse = ".")}')
+    dbWriteTable(conn = db, name = table, value = df, ...)
+
+}
+
+
+#' Append rows into a database table
+#'
+#' This is a wrapper around \code{\link{db_insert}} with the default parameters set to append to a table.
+#' @inheritParams db_insert
+#' @export
+db_append <- function(df, table, db, ...) {
+    db_insert(df, table, db, overwrite = FALSE, append = TRUE, row.names = FALSE, ...)
+}
