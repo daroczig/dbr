@@ -27,7 +27,7 @@ db_config <- memoise(function(db, db_config_path = getOption('db_config_path')) 
 
     hasName(db_secrets, db) || stop('Database ', db, ' not found, check ', db_config_path)
 
-    log_debug('Looking up config for {db}')
+    log_debug('Looking up config for %s', db)
 
     ## hit KMS with each base64-encoded cipher-text (if any) and decrypt
     rapply(db_secrets[[db]], kms_decrypt, classes = 'kms', how = 'replace')

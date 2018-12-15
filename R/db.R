@@ -108,7 +108,7 @@ db_query <- function(sql, db, ...) {
     result_set <- dbGetQuery(db, sql)
     time_to_exec <- Sys.time() - start
 
-    log_info('Finished in {format(time_to_exec, digits = 4)} returning {nrow(result_set)} rows')
+    log_info('Finished in %s returning %s rows', format(time_to_exec, digits = 4), nrow(result_set))
 
     attr(result_set, 'when') <- start
     attr(result_set, 'db') <- attr(db, 'db')
@@ -162,7 +162,7 @@ db_insert <- function(df, table, db, ...) {
     assert_character(table, min.len = 1)
     assert_attr(db, 'db')
 
-    log_info('Inserting {nrow(df)} rows into {paste(table, collapse = ".")}')
+    log_info('Inserting %s rows into %s', nrow(df), paste(table, collapse = "."))
     dbWriteTable(conn = db, name = table, value = df, ...)
 
 }
