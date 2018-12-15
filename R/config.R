@@ -4,7 +4,7 @@
 #' @return list of database parameters (eg \code{hostname}, \code{port}, \code{username}, \code{password} etc)
 #' @export
 #' @note You need to have access to the related KMS key to be able to decrypt cipher-text
-#' @importFrom AWR.KMS kms_decrypt kms_decrypt_file
+#' @importFrom botor kms_decrypt kms_decrypt_file
 #' @importFrom memoise memoise
 #' @importFrom utils hasName
 #' @importFrom yaml yaml.load_file
@@ -51,7 +51,7 @@ db_config_invalidate_cache <- function() {
 #' @return base64-encoded cipher-text
 #' @export
 #' @note You need to have access to the related KMS key to be able to decrypt cipher-text
-#' @importFrom AWR.KMS kms_encrypt
+#' @importFrom botor kms_encrypt
 #' @examples \dontrun{
 #' encrypt_secret('secret sentence I want to store in the YAML file')
 #' }

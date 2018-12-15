@@ -18,7 +18,7 @@ Imports:
   memoise,
   checkmate,
   DBI,
-  AWR.KMS (>= 0.1.0)
+  botor
 Suggests:
   testthat,
   RSQLite
