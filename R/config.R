@@ -8,7 +8,7 @@
 #' @importFrom memoise memoise
 #' @importFrom utils hasName
 #' @importFrom yaml yaml.load_file
-#' @importFrom futile.logger flog.debug flog.info
+#' @importFrom logger log_debug
 db_config <- memoise(function(db, db_config_path = getOption('db_config_path')) {
 
     if (is.function(db_config_path)) {
@@ -27,7 +27,7 @@ db_config <- memoise(function(db, db_config_path = getOption('db_config_path')) 
 
     hasName(db_secrets, db) || stop('Database ', db, ' not found, check ', db_config_path)
 
-    flog.debug('Looking up config for {db}')
+    log_debug('Looking up config for {db}')
 
     ## hit KMS with each base64-encoded cipher-text (if any) and decrypt
     rapply(db_secrets[[db]], kms_decrypt, classes = 'kms', how = 'replace')
@@ -38,8 +38,9 @@ db_config <- memoise(function(db, db_config_path = getOption('db_config_path')) 
 #' Invalidates the cached secret storage
 #' @export
 #' @importFrom memoise forget
+#' @importFrom logger log_info
 db_config_invalidate_cache <- function() {
-    flog.info('Invalidating cache on already loaded DB config(s)')
+    log_info('Invalidating cache on already loaded DB config(s)')
     invisible(forget(db_config))
 }
 

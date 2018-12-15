@@ -14,7 +14,7 @@ RoxygenNote: 6.1.0
 License: AGPL-3
 Imports:
   yaml,
-  futile.logger,
+  logger,
   memoise,
   checkmate,
   DBI,

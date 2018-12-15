@@ -50,7 +50,7 @@ db_connect <- function(db, cache, ...) {
         paste0(' [', paste(paste(names(extraparams), extraparams, sep = '='), collapse = ', '), ']'),
         '')
 
-    flog.info(paste('Connecting to', db, extralog))
+    log_info(paste('Connecting to', db, extralog))
     con <- structure(do.call(dbConnect, params), db = db, cached = cache)
 
     ## cache connection
@@ -72,7 +72,7 @@ db_connect <- function(db, cache, ...) {
 db_close <- function(db) {
     assert_attr(db, 'db')
     if (!isTRUE(attr(db, 'cached'))) {
-        flog.info(paste('Closing connection to', attr(db, "db")))
+        log_info(paste('Closing connection to', attr(db, 'db')))
         dbDisconnect(db)
     }
 }
@@ -85,7 +85,7 @@ db_close <- function(db) {
 #' @return data.frame with query metadata
 #' @export
 #' @importFrom DBI dbGetQuery
-#' @importFrom futile.logger flog.info
+#' @importFrom logger log_info skip_formatter
 #' @importFrom checkmate assert_string
 #' @seealso \code{\link{db_connect}} \code{\link{db_refresh}}
 db_query <- function(sql, db, ...) {
@@ -100,17 +100,15 @@ db_query <- function(sql, db, ...) {
     assert_attr(db, 'db')
     assert_string(sql)
 
-    flog.info("Executing:**********")
-    flog.info(sql)
-    flog.info("********************")
+    log_info('Executing:**********')
+    log_info(skip_formatter(sql))
+    log_info('********************')
 
     start <- Sys.time()
     result_set <- dbGetQuery(db, sql)
     time_to_exec <- Sys.time() - start
 
-    flog.info("Finished in %s returning %s rows",
-              format(time_to_exec, digits = 4),
-              nrow(result_set))
+    log_info('Finished in {format(time_to_exec, digits = 4)} returning {nrow(result_set)} rows')
 
     attr(result_set, 'when') <- start
     attr(result_set, 'db') <- attr(db, 'db')
@@ -164,7 +162,7 @@ db_insert <- function(df, table, db, ...) {
     assert_character(table, min.len = 1)
     assert_attr(db, 'db')
 
-    flog.info('Inserting {nrow(df)} rows into {paste(table, collapse = ".")}')
+    log_info('Inserting {nrow(df)} rows into {paste(table, collapse = ".")}')
     dbWriteTable(conn = db, name = table, value = df, ...)
 
 }
