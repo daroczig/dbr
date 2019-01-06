@@ -8,7 +8,7 @@
 #' @examples \dontrun{
 #' ## create new connection
 #' optbak <- options()
-#' options('db_config_path' = system.file('db_config.yml', package = 'dbr'))
+#' options('db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
 #' con <- db_connect('sqlite')
 #' str(con)
 #' db_query('SELECT 42', 'sqlite')
@@ -145,7 +145,7 @@ db_refresh <- function(x) {
 #' @export
 #' @seealso \code{\link{db_append}}
 #' @examples \dontrun{
-#' options('db_config_path' = system.file('db_config.yml', package = 'dbr'))
+#' options('db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
 #' db_insert(mtcars, 'mtcars', 'sqlite')
 #' db_append(mtcars, c('dm', 'mtcars'), 'sqlite')
 #' }

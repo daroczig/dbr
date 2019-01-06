@@ -1,0 +1,10 @@
+sqlite:
+  drv: !expr RSQLite::SQLite()
+  dbname: !expr tempfile()
+
+shinydemo:
+  drv: !expr RMySQL::MySQL()
+  host: shiny-demo.csa7qlmguqrf.us-east-1.rds.amazonaws.com
+  username: guest
+  password: guest
+  dbname: shinydemo

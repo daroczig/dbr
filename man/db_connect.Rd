@@ -20,7 +20,7 @@ Connect to a database using YAML configs
 \dontrun{
 ## create new connection
 optbak <- options()
-options('db_config_path' = system.file('db_config.yml', package = 'dbr'))
+options('db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
 con <- db_connect('sqlite')
 str(con)
 db_query('SELECT 42', 'sqlite')

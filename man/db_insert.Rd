@@ -20,7 +20,7 @@ Insert rows into a database table
 }
 \examples{
 \dontrun{
-options('db_config_path' = system.file('db_config.yml', package = 'dbr'))
+options('db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
 db_insert(mtcars, 'mtcars', 'sqlite')
 db_append(mtcars, c('dm', 'mtcars'), 'sqlite')
 }

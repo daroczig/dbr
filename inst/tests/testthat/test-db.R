@@ -3,8 +3,13 @@ library(testthat)
 
 context('DB helpers')
 
+library(logger)
+log_threshold(TRACE, namespace = 'dbr')
+example_layout <- layout_glue_generator(format = '{node}/{pid}/{namespace}/{fn} {time} {level}: {msg}')
+log_layout(example_layout, namespace = 'dbr')
+
 bak <- getOption('db_config_path')
-options('db_config_path' = system.file('db_config.yml', package = 'dbr'))
+options('db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
 con <- db_connect('sqlite')
 
 test_that('connection', {
