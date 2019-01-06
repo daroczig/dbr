@@ -38,10 +38,17 @@ sql_chunk_files <- function(file, add = TRUE) {
 #' ## example for a more complex query
 #' cities <- db_query(sql_chunk('dbr.shinydemo.cities.europe'), 'shinydemo')
 #' }
+#' @importFrom logger log_warn
 sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
 
     ## parse config file(s)
-    chunk <- unlist(lapply(chunkfiles, yaml.load_file), recursive = FALSE)
+    chunk <- unlist(lapply(chunkfiles, function(chunkfile) {
+        if (!file.exists(chunkfile)) {
+            log_warn('%s SQL chunk file not found', chunkfile)
+        } else {
+            yaml.load_file(chunkfile)
+        }
+    }), recursive = FALSE)
 
     for (keyi in strsplit(key, '.', fixed = TRUE)[[1]]) {
 
