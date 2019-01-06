@@ -84,3 +84,20 @@ WHERE CountryCode IN (
 ```
 
 The `indent_after_linebreak` parameter is just for cosmetic updates in the query to align `FROM` and `WHERE` on the same character in the SQL statement.
+
+Even more complex / nested example:
+
+```sql
+sql_chunk('dbr.shinydemo.cities.europe_large')
+#> SELECT Name
+#> FROM City
+#> WHERE
+#>   Population > 1000000 AND
+#>   Name IN (
+#>     SELECT Name
+#>     FROM City
+#>     WHERE CountryCode IN (
+#>       SELECT Code
+#>       FROM Country
+#>       WHERE Continent = 'Europe')))
+```

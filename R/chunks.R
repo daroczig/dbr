@@ -61,11 +61,11 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
 
     }
 
-    ## extra indent
-    indent_spaces <- paste(rep(' ', indent_after_linebreak), collapse = '')
-    chunk <- gsub('\n', paste0('\n', indent_spaces), chunk)
+    ## string interpolation
+    chunk <- glue(chunk, ..., .trim = FALSE)
 
-    ## return after string interpolation
-    glue(chunk, ..., .trim = FALSE)
+    ## optional extra indent
+    indent_spaces <- paste(rep(' ', indent_after_linebreak), collapse = '')
+    gsub('\n', paste0('\n', indent_spaces), chunk)
 
 }
