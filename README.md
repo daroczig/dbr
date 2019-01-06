@@ -9,7 +9,7 @@ To be able to connect to a database, the connection parameters are to be specifi
 By default, `dbr` will look for a file named `db_config.yaml` in the current working directory, that can be override via the `db_config_path` global option, eg to the example config bundled in this package:
 
 ```r
-options('db_config_path' = system.file('example-sql-chunks.yaml', package = 'dbr'))
+options('db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
 ```
 
 ## Querying databases
