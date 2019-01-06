@@ -1,0 +1,14 @@
+dbr:
+  shinydemo:
+    countries:
+      count: SELECT COUNT(*) FROM Country
+      europe: |-
+        SELECT Code
+        FROM Country
+        WHERE Continent = 'Europe'
+    cities:
+      europe: |-
+        SELECT Name
+        FROM City
+        WHERE CountryCode IN (
+          {sql_chunk('dbr.shinydemo.countries.europe', indent_after_linebreak = 2)})

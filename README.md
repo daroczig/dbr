@@ -30,4 +30,57 @@ db_query('show tables', 'shinydemo')
 #> 3     CountryLanguage
 ```
 
-For more advanced usage, check `?db_connect` and the above mentioned vignette.
+For more advanced usage, eg caching database connections, check `?db_connect` and the above mentioned vignette.
+
+## SQL templating
+
+To resuse SQL chunks, you may list your SQL queries (or parts of it) in a structured YAML file, like in the bundled example config at https://github.com/daroczig/dbr/blob/master/inst/example_sql_chunks.yaml
+
+TODO note how to add other files
+
+Then you may refer to any key in the list by a string that consist of the keys in hierarchy separated by a dot, so eg getting the `count` key from for the `countries` item in `dbr`'s `shinydemo` section, you could do something like:
+
+```r
+sql_chunk('dbr.shinydemo.countries.count')
+#> SELECT COUNT(*) FROM Country
+```
+
+And pass it right away to `db_query`:
+
+```r
+countries <- db_query(sql_chunk('dbr.shinydemo.countries.count'), 'shinydemo')
+#> INFO [2019-01-06 01:33:33] Connecting to shinydemo
+#> INFO [2019-01-06 01:33:34] Executing:**********
+#> INFO [2019-01-06 01:33:34] SELECT COUNT(*) FROM Country
+#> INFO [2019-01-06 01:33:34] ********************
+#> INFO [2019-01-06 01:33:34] Finished in 0.1291 secs returning 1 rows
+#> INFO [2019-01-06 01:33:34] Closing connection to shinydemo
+```
+
+The power of this templating approach is that you can easily reuse SQL chunks, eg for the list of European countries in:
+
+```r
+cities <- db_query(sql_chunk('dbr.shinydemo.cities.europe'), 'shinydemo')
+#> INFO [2019-01-06 01:32:02] Connecting to shinydemo
+#> INFO [2019-01-06 01:32:02] Executing:**********
+#> INFO [2019-01-06 01:32:02] SELECT Name
+#> FROM City
+#> WHERE CountryCode IN (
+#>   SELECT Code
+#>   FROM Country
+#>   WHERE Continent = 'Europe')
+#> INFO [2019-01-06 01:32:02] ********************
+#> INFO [2019-01-06 01:32:02] Finished in 0.1225 secs returning 643 rows
+#> INFO [2019-01-06 01:32:02] Closing connection to shinydemo
+```
+
+Where the `Country`-related subquery was specified in the `dbr.shinydemo.countries.europe` key as per:
+
+```sql
+SELECT Name
+FROM City
+WHERE CountryCode IN (
+  {sql_chunk('dbr.shinydemo.countries.europe', indent_after_linebreak = 2)})
+```
+
+The `indent_after_linebreak` parameter is just for cosmetic updates in the query to align `FROM` and `WHERE` on the same character in the SQL statement.
