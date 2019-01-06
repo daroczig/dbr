@@ -36,7 +36,7 @@ For more advanced usage, eg caching database connections, check `?db_connect` an
 
 To resuse SQL chunks, you may list your SQL queries (or parts of it) in a structured YAML file, like in the bundled example config at https://github.com/daroczig/dbr/blob/master/inst/example_sql_chunks.yaml
 
-TODO note how to add other files
+Use `sql_chunk_files` to list or update the currently used SQL template YAML files.
 
 Then you may refer to any key in the list by a string that consist of the keys in hierarchy separated by a dot, so eg getting the `count` key from for the `countries` item in `dbr`'s `shinydemo` section, you could do something like:
 
