@@ -38,7 +38,7 @@ sql_chunk_files <- function(file, add = TRUE) {
 #' ## example for a more complex query
 #' cities <- db_query(sql_chunk('dbr.shinydemo.cities.europe'), 'shinydemo')
 #' }
-#' @importFrom logger log_warn
+#' @importFrom logger log_warn %except%
 sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
 
     ## parse config file(s)
