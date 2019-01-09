@@ -7,7 +7,7 @@ Authors@R: c(
     )
 Title: Convenient Database Connections and Queries
 Description: Convenient database connections and queries from R on the top of DBI.
-Version: 0.1.0.9000
+Version: 0.1.0.9001
 Date: 2019-01-09
 URL: https://github.com/daroczig/dbr
 RoxygenNote: 6.1.0

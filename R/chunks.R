@@ -42,7 +42,7 @@ sql_chunk_files <- function(file, add = TRUE) {
 sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
 
     ## parse config file(s)
-    chunk <- unlist(lapply(chunkfiles, function(chunkfile) {
+    chunk <- unlist(lapply(sql_chunk_files(), function(chunkfile) {
         if (!file.exists(chunkfile)) {
             log_warn('%s SQL chunk file not found', chunkfile)
         } else {
@@ -62,7 +62,7 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
     }
 
     ## string interpolation
-    chunk <- glue(chunk, ..., .trim = FALSE)
+    chunk <- do.call(glue, c(list(chunk, .trim = FALSE), list(...)))
 
     ## optional extra indent
     indent_spaces <- paste(rep(' ', indent_after_linebreak), collapse = '')

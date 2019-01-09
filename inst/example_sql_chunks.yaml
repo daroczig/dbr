@@ -19,3 +19,15 @@ dbr:
           Population > 1000000 AND
           Name IN (
             {sql_chunk('dbr.shinydemo.cities.europe', indent_after_linebreak = 4)}))
+  unittests:
+    static: |-
+      x
+    fallback: |-
+      x == {x %except% 5}
+    nested: |-
+      xx == {sql_chunk('dbr.unittests.static')}
+    nested2: |-
+      xxx == {x %except% 42} | {sql_chunk('dbr.unittests.nested')}
+    nofallback: |-
+      y = {y}
+# sql_chunk('dbr.unittests.xx', x= 5)
