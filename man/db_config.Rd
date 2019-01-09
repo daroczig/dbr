@@ -4,12 +4,12 @@
 \alias{db_config}
 \title{Load DB configs from a YAML file and decrypt secrets via KMS if found}
 \usage{
-db_config(db, db_config_path = getOption("db_config_path"))
+db_config(db, db_config_path = getOption("dbr.db_config_path"))
 }
 \arguments{
 \item{db}{database name reference}
 
-\item{db_config_path}{file path specified by the \code{db_config_path} global option as a string or function returning a string, which defaults to the \code{db_config.yaml} file in the current working directory}
+\item{db_config_path}{file path specified by the \code{dbr.db_config_path} global option as a string or function returning a string, which defaults to the \code{db_config.yaml} file in the current working directory}
 }
 \value{
 list of database parameters (eg \code{hostname}, \code{port}, \code{username}, \code{password} etc)

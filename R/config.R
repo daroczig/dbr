@@ -1,6 +1,6 @@
 #' Load DB configs from a YAML file and decrypt secrets via KMS if found
 #' @param db database name reference
-#' @param db_config_path file path specified by the \code{db_config_path} global option as a string or function returning a string, which defaults to the \code{db_config.yaml} file in the current working directory
+#' @param db_config_path file path specified by the \code{dbr.db_config_path} global option as a string or function returning a string, which defaults to the \code{db_config.yaml} file in the current working directory
 #' @return list of database parameters (eg \code{hostname}, \code{port}, \code{username}, \code{password} etc)
 #' @export
 #' @note You need to have access to the related KMS key to be able to decrypt cipher-text
@@ -9,7 +9,7 @@
 #' @importFrom utils hasName
 #' @importFrom yaml yaml.load_file
 #' @importFrom logger log_debug
-db_config <- memoise(function(db, db_config_path = getOption('db_config_path')) {
+db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path')) {
 
     if (is.function(db_config_path)) {
         db_config_path <- db_config_path()

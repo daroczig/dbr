@@ -1,5 +1,5 @@
 #' Connect to a database using YAML configs
-#' @param db name of database, must be present in the file specified by \code{getOption('db_config_path')}
+#' @param db name of database, must be present in the file specified by \code{getOption('dbr.db_config_path')}
 #' @param cache optional caching of the connection. If set to \code{TRUE}, the connection will be cached in the background and an all future \code{db_connect} calls will simply return that (even if called automatically from eg \code{db_query}) until the end of the R session or when caching on the \code{db} is disabled in a future \code{db_connect} call with explic \code{cache = FALSE}. See the examples for more details.
 #' @param ... extra parameters passed to the database driver, even ones overriding the default values loaded from the YAML config
 #' @importFrom DBI dbConnect dbDriver
@@ -8,7 +8,7 @@
 #' @examples \dontrun{
 #' ## create new connection
 #' optbak <- options()
-#' options('db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
+#' options('dbr.db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
 #' con <- db_connect('sqlite')
 #' str(con)
 #' db_query('SELECT 42', 'sqlite')

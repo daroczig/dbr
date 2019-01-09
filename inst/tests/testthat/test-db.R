@@ -8,8 +8,8 @@ log_threshold(TRACE, namespace = 'dbr')
 example_layout <- layout_glue_generator(format = '{node}/{pid}/{namespace}/{fn} {time} {level}: {msg}')
 log_layout(example_layout, namespace = 'dbr')
 
-bak <- getOption('db_config_path')
-options('db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
+bak <- getOption('dbr.db_config_path')
+options('dbr.db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
 con <- db_connect('sqlite')
 
 test_that('connection', {
@@ -22,4 +22,4 @@ test_that('static sql', {
     expect_equal(db_query('select 42', db = 'sqlite')[[1]], 42)
 })
 
-options('db_config_path' = bak)
+options('dbr.db_config_path' = bak)

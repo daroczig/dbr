@@ -6,10 +6,10 @@ Vignette coming, until then, please check the slides presented at the useR! 2018
 
 To be able to connect to a database, the connection parameters are to be specified in a YAML file. 
 
-By default, `dbr` will look for a file named `db_config.yaml` in the current working directory, that can be override via the `db_config_path` global option, eg to the example config bundled in this package:
+By default, `dbr` will look for a file named `db_config.yaml` in the current working directory, that can be override via the `dbr.db_config_path` global option, eg to the example config bundled in this package:
 
 ```r
-options('db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
+options(dbr.'db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
 ```
 
 ## Querying databases
