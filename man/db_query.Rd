@@ -4,7 +4,7 @@
 \alias{db_query}
 \title{Execute an SQL query in a database}
 \usage{
-db_query(sql, db, ...)
+db_query(sql, db, ..., output_format = getOption("dbr.output_format"))
 }
 \arguments{
 \item{sql}{string}
@@ -12,6 +12,8 @@ db_query(sql, db, ...)
 \item{db}{database reference by name or object}
 
 \item{...}{passed to \code{db_connect}}
+
+\item{output_format}{preferred output format that defaults to \code{data.frame}, but could be also \code{data.table} or \code{tibble} as well if the related R package is installed}
 }
 \value{
 data.frame with query metadata

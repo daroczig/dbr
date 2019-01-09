@@ -82,13 +82,14 @@ db_close <- function(db) {
 #' @param sql string
 #' @param db database reference by name or object
 #' @param ... passed to \code{db_connect}
+#' @param output_format preferred output format that defaults to \code{data.frame}, but could be also \code{data.table} or \code{tibble} as well if the related R package is installed
 #' @return data.frame with query metadata
 #' @export
 #' @importFrom DBI dbGetQuery
 #' @importFrom logger log_info skip_formatter
 #' @importFrom checkmate assert_string
 #' @seealso \code{\link{db_connect}} \code{\link{db_refresh}}
-db_query <- function(sql, db, ...) {
+db_query <- function(sql, db, ..., output_format = getOption('dbr.output_format')) {
 
     if (!is.object(db)) {
         db <- db_connect(db, ...)
@@ -114,6 +115,15 @@ db_query <- function(sql, db, ...) {
     attr(result_set, 'db') <- attr(db, 'db')
     attr(result_set, 'time_to_exec') <- time_to_exec
     attr(result_set, 'statement') <-  sql
+
+    ## convert to proffered output format
+    if (output_format != 'data.frame') {
+        result_set <- switch(
+            output_format,
+            'data.table' = data.table::setDT(result_set),
+            'tibble' = tibble::as_tibble(result_set),
+            stop('Unsupported output_format -- please use data.frame, data.table or tibble.'))
+    }
 
     result_set
 

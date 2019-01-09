@@ -6,6 +6,10 @@ dbs <- new.env(hash = TRUE, parent = emptyenv(), size = 29L)
     logger::log_formatter(logger::formatter_sprintf, namespace = pkgname)
 
     ## path to the default DB config YAML file
-    options('db_config_path' = function() file.path(getwd(), 'db_config.yaml'))
+    options('dbr.db_config_path' = function() file.path(getwd(), 'db_config.yaml'))
+
+    ## by default, return data as standard data.frame
+    ## as data.table or tibble might not be available / preferred
+    options('dbr.output_format' = 'data.frame')
 
 }
