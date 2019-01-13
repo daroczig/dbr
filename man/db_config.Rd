@@ -2,7 +2,7 @@
 % Please edit documentation in R/config.R
 \name{db_config}
 \alias{db_config}
-\title{Load DB configs from a YAML file and decrypt secrets via KMS if found}
+\title{Load DB connection parameters}
 \usage{
 db_config(db, db_config_path = getOption("dbr.db_config_path"))
 }
@@ -15,8 +15,27 @@ db_config(db, db_config_path = getOption("dbr.db_config_path"))
 list of database parameters (eg \code{hostname}, \code{port}, \code{username}, \code{password} etc)
 }
 \description{
-Load DB configs from a YAML file and decrypt secrets via KMS if found
+Load DB connection parameters from a YAML file and decrypt secrets via KMS if found.
+}
+\details{
+The YAML file should include all connection parameters, including the Database Driver as an R object, see eg
+
+\preformatted{dbreference:
+  host: localhost
+  port: 3306
+  drv: !expr RMySQL::MySQL()
+  username: foo
+  password: bar}
+
+KMS-encrypted secrets should be specified with the \code{kms} type in the YAML file, such as:
+
+\preformatted{dbreference:
+  ...
+  password: !kms |
+    ciphertext}
+
+Fields that should not be passed to \code{drv} (eg extra params not used for making the DB connection) should be specified with the \code{attr} type that will be added as attributes to the returned list.
 }
 \note{
-You need to have access to the related KMS key to be able to decrypt cipher-text
+You need to have access to the related KMS key to be able to decrypt cipher-text.
 }
