@@ -40,28 +40,28 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
     }
 
     ## parse config file
-    db_secrets <- yaml.load_file(
+    params <- yaml.load_file(
         db_config_path,
         ## add KMS classes
         handlers = list('kms'  = function(x) structure(x, class = c('kms')),
                         'attr' = function(x) structure(x, class = c('attr'))))
 
-    hasName(db_secrets, db) || stop('Database ', db, ' not found, check ', db_config_path)
+    hasName(params, db) || stop('Database ', db, ' not found, check ', db_config_path)
 
     log_debug('Looking up config for %s', db)
-    db_secrets <- db_secrets[[db]]
+    params <- params[[db]]
 
     ## hit KMS with each base64-encoded cipher-text (if any) and decrypt
-    db_secrets <- rapply(db_secrets, kms_decrypt, classes = 'kms', how = 'replace')
+    params <- rapply(params, kms_decrypt, classes = 'kms', how = 'replace')
 
     ## move attr list values from list to attributes
-    attributes <- db_secrets[sapply(db_secrets, class) == 'attr']
-    db_secrets <- db_secrets[setdiff(names(db_secrets), names(attributes))]
+    attributes <- params[sapply(params, class) == 'attr']
+    params <- params[setdiff(names(params), names(attributes))]
     for (attribute in names(attributes)) {
-        attr(db_secrets, attribute) <- attributes[[attribute]]
+        attr(params, attribute) <- attributes[[attribute]]
     }
 
-    db_secrets
+    params
 
 })
 
