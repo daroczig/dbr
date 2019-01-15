@@ -9,6 +9,7 @@
 #' @importFrom checkmate assert_data_frame assert_directory_exists
 #' @importFrom logger fail_on_missing_package
 write_jsonlines <- function(df, file = tempfile()) {
+    ## TODO move to botor package?
     assert_data_frame(df)
     assert_directory_exists(dirname(file))
     fail_on_missing_package('jsonlite')
@@ -26,8 +27,6 @@ write_jsonlines <- function(df, file = tempfile()) {
 #' @importFrom botor s3_write s3_delete
 redshift_insert_via_copy_from_s3 <- function(df, table, db) {
 
-    ## TODO gzip! in botor?
-
     ## load and test if required params set for DB
     config <- db_config(db)
     if (!all(c('s3_copy_bucket', 's3_copy_iam_role') %in% names(attributes(config)))) {
@@ -36,7 +35,7 @@ redshift_insert_via_copy_from_s3 <- function(df, table, db) {
 
     ## dump data frame to S3 as jsonlines
     s3 <- tempfile(tmpdir = attr(config, 's3_copy_bucket', exact = TRUE), fileext = '.json')
-    s3_write(df, write_jsonlines, s3)
+    s3_write(df, write_jsonlines, s3, compress = 'gzip')
 
     ## load data from S3 into Redshift
     iam_role <- attr(config, 's3_copy_iam_role', exact = TRUE)
@@ -45,7 +44,7 @@ redshift_insert_via_copy_from_s3 <- function(df, table, db) {
             "COPY", paste(table, collapse = '.'),
             "FROM", shQuote(s3, type = 'sh'),
             "iam_role", shQuote(iam_role, type = 'sh'),
-            "JSON 'auto'"),
+            "JSON 'auto' GZIP"),
         db = db)
 
     ## clean up
