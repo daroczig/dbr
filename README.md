@@ -1,6 +1,9 @@
 # dbr: Convenient database connections and queries from R
 
-Vignette coming, until then, please check the slides presented at the useR! 2018 conference: http://bit.ly/user2018-dbr
+Vignette coming, until then, please check the talk presented at the useR! 2018 conference:
+
+* [slides](http://bit.ly/user2018-dbr)
+* [video](https://www.youtube.com/watch?v=z7x4UOHNguY)
 
 ## Setting up a config file for the database connections
 
