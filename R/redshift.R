@@ -22,13 +22,16 @@ write_jsonlines <- function(df, file = tempfile()) {
 #' Note that the related database's YAML config should include \code{s3_copy_bucket} and \code{s3_copy_iam_role} fields with \code{attr} type pointing to a staging S3 bucket (to which the current node has write access, and the Redshift IAM Role has read access) and the full ARN of the Redshift IAM Role.
 #' @param df \code{data.frame}
 #' @param table Redshift schema and table name (separated by a dot)
-#' @inheritParams db_connect
+#' @inheritParams db_query
 #' @export
 #' @importFrom botor s3_write s3_delete
 redshift_insert_via_copy_from_s3 <- function(df, table, db) {
 
+    ## extract database name if actual DB connection was passed
+    dbname <- ifelse(is.object(db), attr(db, 'db'), db)
+
     ## load and test if required params set for DB
-    config <- db_config(db)
+    config <- db_config(dbname)
     if (!all(c('s3_copy_bucket', 's3_copy_iam_role') %in% names(attributes(config)))) {
         stop('Need to specify s3_copy_bucket and s3_copy_iam_role in the database config YAML')
     }

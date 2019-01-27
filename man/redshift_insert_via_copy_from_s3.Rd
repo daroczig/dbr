@@ -11,7 +11,7 @@ redshift_insert_via_copy_from_s3(df, table, db)
 
 \item{table}{Redshift schema and table name (separated by a dot)}
 
-\item{db}{name of database, must be present in the file specified by \code{getOption('dbr.db_config_path')}}
+\item{db}{database reference by name or object}
 }
 \description{
 Note that the related database's YAML config should include \code{s3_copy_bucket} and \code{s3_copy_iam_role} fields with \code{attr} type pointing to a staging S3 bucket (to which the current node has write access, and the Redshift IAM Role has read access) and the full ARN of the Redshift IAM Role.
