@@ -27,6 +27,9 @@ write_jsonlines <- function(df, file = tempfile()) {
 #' @importFrom botor s3_write s3_delete
 redshift_insert_via_copy_from_s3 <- function(df, table, db) {
 
+    ## TODO split JSON into smaller chunks and provide a Manifest file
+    ##      to speed up operations and also to fix current limit of ~4Gb data
+
     ## extract database name if actual DB connection was passed
     dbname <- ifelse(is.object(db), attr(db, 'db'), db)
 
@@ -37,7 +40,7 @@ redshift_insert_via_copy_from_s3 <- function(df, table, db) {
     }
 
     ## dump data frame to S3 as jsonlines
-    s3 <- tempfile(tmpdir = attr(config, 's3_copy_bucket', exact = TRUE), fileext = '.json')
+    s3 <- tempfile(tmpdir = attr(config, 's3_copy_bucket', exact = TRUE), fileext = '.json.gz')
     s3_write(df, write_jsonlines, s3, compress = 'gzip')
 
     ## load data from S3 into Redshift
