@@ -8,6 +8,10 @@ sql_chunk(key, ..., indent_after_linebreak = 0)
 }
 \arguments{
 \item{key}{key defined in \code{\link{sql_chunk_files}}}
+
+\item{...}{passed to \code{glue} for string interpolation}
+
+\item{indent_after_linebreak}{integer for extra indent}
 }
 \value{
 string
