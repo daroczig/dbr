@@ -37,7 +37,7 @@ For more advanced usage, eg caching database connections, check `?db_connect` an
 
 ## SQL templating
 
-To resuse SQL chunks, you may list your SQL queries (or parts of it) in a structured YAML file, like in the bundled example config at https://github.com/daroczig/dbr/blob/master/inst/example_sql_chunks.yaml
+To reuse SQL chunks, you may list your SQL queries (or parts of it) in a structured YAML file, like in the bundled example config at https://github.com/daroczig/dbr/blob/master/inst/example_sql_chunks.yaml
 
 Use `sql_chunk_files` to list or update the currently used SQL template YAML files.
 
