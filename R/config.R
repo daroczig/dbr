@@ -11,11 +11,11 @@
 #'   username: foo
 #'   password: bar}
 #'
-#' KMS-encrypted secrets should be specified with the \code{kms} type in the YAML file, such as:
+#' KMS-encrypted secrets should be specified with the \code{aws_kms} type in the YAML file, such as:
 #'
 #' \preformatted{dbreference:
 #'   ...
-#'   password: !kms |
+#'   password: !aws_kms |
 #'     ciphertext}
 #'
 #' Fields that should not be passed to \code{drv} (eg extra params not used for making the DB connection) should be specified with the \code{attr} type that will be added as attributes to the returned list.
@@ -43,8 +43,11 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
     params <- yaml.load_file(
         db_config_path,
         ## add KMS classes
-        handlers = list('kms'  = function(x) structure(x, class = c('kms')),
-                        'attr' = function(x) structure(x, class = c('attr'))))
+        handlers = list(
+            'aws_kms' = function(x) structure(x, class = c('aws_kms')),
+            ## legacy, use aws_kms instead, remove this in CRAN version
+            'kms'     = function(x) structure(x, class = c('aws_kms')),
+            'attr'    = function(x) structure(x, class = c('attr'))))
 
     hasName(params, db) || stop('Database ', db, ' not found, check ', db_config_path)
 
@@ -52,7 +55,7 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
     params <- params[[db]]
 
     ## hit KMS with each base64-encoded cipher-text (if any) and decrypt
-    params <- rapply(params, kms_decrypt, classes = 'kms', how = 'replace')
+    params <- rapply(params, kms_decrypt, classes = 'aws_kms', how = 'replace')
 
     ## move attr list values from list to attributes
     attributes <- params[sapply(params, class) == 'attr']

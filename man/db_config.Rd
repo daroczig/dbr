@@ -27,11 +27,11 @@ The YAML file should include all connection parameters, including the Database D
   username: foo
   password: bar}
 
-KMS-encrypted secrets should be specified with the \code{kms} type in the YAML file, such as:
+KMS-encrypted secrets should be specified with the \code{aws_kms} type in the YAML file, such as:
 
 \preformatted{dbreference:
   ...
-  password: !kms |
+  password: !aws_kms |
     ciphertext}
 
 Fields that should not be passed to \code{drv} (eg extra params not used for making the DB connection) should be specified with the \code{attr} type that will be added as attributes to the returned list.
