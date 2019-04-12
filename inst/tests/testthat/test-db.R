@@ -81,5 +81,25 @@ test_that('global env overrides works', {
 
 ## #############################################################################
 
+context('sql formatter')
+
+formatter_bak <- getOption('dbr.sql_formatter')
+library(glue)
+options('dbr.sql_formatter' = glue)
+.x <- 2
+
+test_that('glueing', {
+    expect_equal(db_query('SELECT 42', db = con)[[1]], 42)
+    expect_equal(db_query('SELECT {42}', db = con)[[1]], 42)
+    expect_equal(db_query('SELECT {40 + 2}', db = con)[[1]], 42)
+    expect_equal(db_query('SELECT {40 + x}', x = 2, db = con)[[1]], 42)
+    expect_equal(db_query('SELECT {y + x}', y = 40 , x = 2, db = con)[[1]], 42)
+    expect_equal(db_query('SELECT {40 + .x}', db = con)[[1]], 42)
+})
+
+## #############################################################################
+
+rm(.x)
 options('dbr.db_config_path' = bak)
+options('dbr.sql_formatter' = formatter_bak)
 log_threshold(log_threshold_bak)

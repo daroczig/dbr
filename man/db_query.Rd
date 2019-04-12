@@ -4,14 +4,17 @@
 \alias{db_query}
 \title{Execute an SQL query in a database}
 \usage{
-db_query(sql, db, ..., output_format = getOption("dbr.output_format"))
+db_query(sql, db, ..., sql_formatter = getOption("dbr.sql_formatter"),
+  output_format = getOption("dbr.output_format"))
 }
 \arguments{
 \item{sql}{string}
 
 \item{db}{database reference by name or object}
 
-\item{...}{passed to \code{db_connect}}
+\item{...}{passed to \code{sql_formatter}}
+
+\item{sql_formatter}{function to be applied on \code{sql} potentially with \code{...}, eg using \code{glue} for string interpolation}
 
 \item{output_format}{preferred output format that defaults to \code{data.frame}, but could be also \code{data.table} or \code{tibble} as well if the related R package is installed}
 }
@@ -20,6 +23,13 @@ data.frame with query metadata
 }
 \description{
 Execute an SQL query in a database
+}
+\examples{
+\dontrun{
+options('dbr.db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
+db_query('SELECT 42', 'sqlite')
+db_query('SELECT {40 + 2}', 'sqlite')
+}
 }
 \seealso{
 \code{\link{db_connect}} \code{\link{db_refresh}}

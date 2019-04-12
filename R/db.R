@@ -81,18 +81,26 @@ db_close <- function(db) {
 #' Execute an SQL query in a database
 #' @param sql string
 #' @param db database reference by name or object
-#' @param ... passed to \code{db_connect}
+#' @param ... passed to \code{sql_formatter}
+#' @param sql_formatter function to be applied on \code{sql} potentially with \code{...}, eg using \code{glue} for string interpolation
 #' @param output_format preferred output format that defaults to \code{data.frame}, but could be also \code{data.table} or \code{tibble} as well if the related R package is installed
 #' @return data.frame with query metadata
 #' @export
 #' @importFrom DBI dbGetQuery
 #' @importFrom logger log_info skip_formatter
-#' @importFrom checkmate assert_string
+#' @importFrom checkmate assert_string assert_function
 #' @seealso \code{\link{db_connect}} \code{\link{db_refresh}}
-db_query <- function(sql, db, ..., output_format = getOption('dbr.output_format')) {
+#' @examples \dontrun{
+#' options('dbr.db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
+#' db_query('SELECT 42', 'sqlite')
+#' db_query('SELECT {40 + 2}', 'sqlite')
+#' }
+db_query <- function(sql, db, ...,
+                     sql_formatter = getOption('dbr.sql_formatter'),
+                     output_format = getOption('dbr.output_format')) {
 
     if (!is.object(db)) {
-        db <- db_connect(db, ...)
+        db <- db_connect(db)
         on.exit({
           db_close(db)
         })
@@ -100,6 +108,9 @@ db_query <- function(sql, db, ..., output_format = getOption('dbr.output_format'
 
     assert_attr(db, 'db')
     assert_string(sql)
+    assert_function(sql_formatter)
+
+    sql <- do.call(sql_formatter, c(list(sql), list(...)), env = parent.frame())
 
     log_info('Executing:**********')
     log_info(skip_formatter(sql))
