@@ -47,7 +47,8 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
             'aws_kms' = function(x) structure(x, class = c('aws_kms')),
             ## legacy, use aws_kms instead, remove this in CRAN version
             'kms'     = function(x) structure(x, class = c('aws_kms')),
-            'attr'    = function(x) structure(x, class = c('attr'))))
+            'attr'    = function(x) structure(x, class = c('attr'))),
+        eval.expr = TRUE)
 
     hasName(params, db) || stop('Database ', db, ' not found, check ', db_config_path)
 
