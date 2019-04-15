@@ -195,5 +195,11 @@ db_insert <- function(df, table, db, ...) {
 #' @inheritParams db_insert
 #' @export
 db_append <- function(df, table, db, ...) {
-    db_insert(df, table, db, overwrite = FALSE, append = TRUE, row.names = FALSE, ...)
+    ## check if it's Redshift, as COPY FROM stdin doesn't work there
+    if (is.redshift(db)) {
+        redshift_insert_via_copy_from_s3(df = df, table = table, db = db)
+    } else {    
+        ## otherwise do a COPY FROM stdin
+        db_insert(df, table, db, overwrite = FALSE, append = TRUE, row.names = FALSE, ...)
+    }
 }
