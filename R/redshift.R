@@ -16,6 +16,14 @@ write_jsonlines <- function(df, file = tempfile()) {
     jsonlite::stream_out(df, file(file), verbose = FALSE)
 }
 
+#' Checks if a database reference or connection is Redshift or not
+#' @param db database reference by name or object
+#' @return boolean
+#' @keywords internal
+is.redshift <- function(db) {
+    config <- db_config(ifelse(is.object(db), attr(db, 'db'), db))
+    class(config$drv) =="PostgreSQLDriver" && config$port == 5439
+}
 
 #' Dumps a data frame to disk, copies to S3 and runs COPY FROM on Redshift
 #'
