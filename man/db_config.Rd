@@ -37,5 +37,5 @@ KMS-encrypted secrets should be specified with the \code{aws_kms} type in the YA
 Fields that should not be passed to \code{drv} (eg extra params not used for making the DB connection) should be specified with the \code{attr} type that will be added as attributes to the returned list.
 }
 \note{
-You need to have access to the related KMS key to be able to decrypt cipher-text.
+You need to install the \code{botor} package and also have access to the related KMS key to be able to decrypt cipher-text.
 }

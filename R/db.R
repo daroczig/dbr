@@ -110,7 +110,7 @@ db_query <- function(sql, db, ...,
     assert_string(sql)
     assert_function(sql_formatter)
 
-    sql <- do.call(sql_formatter, c(list(sql), list(...)), env = parent.frame())
+    sql <- do.call(sql_formatter, c(list(sql), list(...)), envir = parent.frame())
 
     log_info('Executing:**********')
     log_info(skip_formatter(sql))
@@ -198,7 +198,7 @@ db_append <- function(df, table, db, ...) {
     ## check if it's Redshift, as COPY FROM stdin doesn't work there
     if (is.redshift(db)) {
         redshift_insert_via_copy_from_s3(df = df, table = table, db = db)
-    } else {    
+    } else {
         ## otherwise do a COPY FROM stdin
         db_insert(df, table, db, overwrite = FALSE, append = TRUE, row.names = FALSE, ...)
     }

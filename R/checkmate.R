@@ -12,3 +12,11 @@ check_attr <- function(x, attribute) {
 assert_attr <- makeAssertionFunction(check_attr)
 test_attr   <- makeTestFunction(check_attr)
 expect_attr <- makeExpectationFunction(check_attr)
+
+
+#' Assert that botor pkg is installed
+#' @keywords internal
+#' @importFrom checkmate assert
+assert_botor_available <- function() {
+    assert(requireNamespace('botor'))
+}

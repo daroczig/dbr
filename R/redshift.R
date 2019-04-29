@@ -32,8 +32,9 @@ is.redshift <- function(db) {
 #' @param table Redshift schema and table name (separated by a dot)
 #' @inheritParams db_query
 #' @export
-#' @importFrom botor s3_write s3_delete
 redshift_insert_via_copy_from_s3 <- function(df, table, db) {
+
+    assert_botor_available()
 
     ## TODO split JSON into smaller chunks and provide a Manifest file
     ##      to speed up operations and also to fix current limit of ~4Gb data
@@ -49,7 +50,7 @@ redshift_insert_via_copy_from_s3 <- function(df, table, db) {
 
     ## dump data frame to S3 as jsonlines
     s3 <- tempfile(tmpdir = attr(config, 's3_copy_bucket', exact = TRUE), fileext = '.json.gz')
-    s3_write(df, write_jsonlines, s3, compress = 'gzip')
+    botor::s3_write(df, write_jsonlines, s3, compress = 'gzip')
 
     ## load data from S3 into Redshift
     iam_role <- attr(config, 's3_copy_iam_role', exact = TRUE)
@@ -62,7 +63,7 @@ redshift_insert_via_copy_from_s3 <- function(df, table, db) {
         db = db)
 
     ## clean up
-    s3_delete(s3)
+    botor::s3_delete(s3)
 
 }
 

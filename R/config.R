@@ -23,8 +23,7 @@
 #' @param db_config_path file path specified by the \code{dbr.db_config_path} global option as a string or function returning a string, which defaults to the \code{db_config.yaml} file in the current working directory
 #' @return list of database parameters (eg \code{hostname}, \code{port}, \code{username}, \code{password} etc)
 #' @export
-#' @note You need to have access to the related KMS key to be able to decrypt cipher-text.
-#' @importFrom botor kms_decrypt kms_decrypt_file
+#' @note You need to install the \code{botor} package and also have access to the related KMS key to be able to decrypt cipher-text.
 #' @importFrom memoise memoise
 #' @importFrom utils hasName
 #' @importFrom yaml yaml.load_file
@@ -44,9 +43,15 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
         db_config_path,
         ## add KMS classes
         handlers = list(
-            'aws_kms' = function(x) structure(x, class = c('aws_kms')),
+            'aws_kms' = function(x) {
+                assert_botor_available()
+                structure(x, class = c('aws_kms'))
+            },
             ## legacy, use aws_kms instead, remove this in CRAN version
-            'kms'     = function(x) structure(x, class = c('aws_kms')),
+            'kms'     = function(x) {
+                assert_botor_available()
+                structure(x, class = c('aws_kms'))
+            },
             'attr'    = function(x) structure(x, class = c('attr'))),
         eval.expr = TRUE)
 
@@ -56,7 +61,7 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
     params <- params[[db]]
 
     ## hit KMS with each base64-encoded cipher-text (if any) and decrypt
-    params <- rapply(params, kms_decrypt, classes = 'aws_kms', how = 'replace')
+    params <- rapply(params, botor::kms_decrypt, classes = 'aws_kms', how = 'replace')
 
     ## move attr list values from list to attributes
     attributes <- params[sapply(params, class) == 'attr']
@@ -86,12 +91,12 @@ db_config_invalidate_cache <- function() {
 #' @return base64-encoded cipher-text
 #' @export
 #' @note You need to have access to the related KMS key to be able to decrypt cipher-text
-#' @importFrom botor kms_encrypt
 #' @examples \dontrun{
 #' encrypt_secret('secret sentence I want to store in the YAML file')
 #' }
 db_config_encrypt_secret <- function(secret, key) {
-    structure(kms_encrypt(key = key, text = secret), class = 'base64')
+    assert_botor_available()
+    structure(botor::kms_encrypt(key = key, text = secret), class = 'base64')
 }
 
 #' @export

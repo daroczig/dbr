@@ -19,11 +19,11 @@ Imports:
   memoise,
   checkmate,
   DBI,
-  botor (>= 0.1.0.9002),
   glue
 Suggests:
   testthat,
   RSQLite,
   data.table,
   tibble,
-  jsonlite
+  jsonlite,
+  botor (>= 0.1.0.9002)
