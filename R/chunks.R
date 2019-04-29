@@ -1,4 +1,4 @@
-chunkfiles <- system.file('example_sql_chunks.yaml', package = 'dbr')
+chunkfiles <- NULL
 
 
 #' List or update the list of SQL chunk files to be used in \code{\link{sql_chunk}}
