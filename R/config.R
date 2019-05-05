@@ -101,5 +101,7 @@ db_config_encrypt_secret <- function(secret, key) {
 
 #' @export
 print.base64 <- function(x, ...) {
-    cat(strwrap(x, 76), sep = '\n')
+    cat(sapply(
+        split(strsplit(x, '')[[1]], rep(1:ceiling(nchar(x) / 76), each = 76, length.out = nchar(x))),
+        paste, collapse = ''), sep = '\n')
 }
