@@ -7,12 +7,47 @@ Vignette coming, until then, please check the talk presented at the useR! 2018 c
 
 ## Setting up a config file for the database connections
 
-To be able to connect to a database, the connection parameters are to be specified in a YAML file. 
+To be able to connect to a database, the connection parameters are to be specified in a YAML file, for example for a SQLite database to be created in a temp file: 
+
+```yaml
+sqlite:
+  drv: !expr RSQLite::SQLite()
+  dbname: !expr tempfile()
+```
 
 By default, `dbr` will look for a file named `db_config.yaml` in the current working directory, that can be override via the `dbr.db_config_path` global option, eg to the example config bundled in this package:
 
 ```r
-options(dbr.'db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
+options(dbr.db_config_path = system.file('example_db_config.yaml', package = 'dbr'))
+```
+
+A more complex example from the demo YAML file describing a MySQL connection to a database hosted by RStudio (with public username and password):
+
+```yaml
+shinydemo:
+  drv: !expr RMySQL::MySQL()
+  host: shiny-demo.csa7qlmguqrf.us-east-1.rds.amazonaws.com
+  username: guest
+  password: guest
+  dbname: shinydemo
+```
+
+Note, that instead of simple strings, you can also specify KMS-encrypted passwords, other secrets and parameters as well, eg:
+
+```yaml
+redshift:
+  host: !aws_kms |
+    KMSencryptedciphertext...
+  port: 5439
+  dbname: dbname
+  user: username
+  drv: !expr RPostgreSQL::PostgreSQL()
+  password: !aws_kms |
+    KMSencryptedciphertext...
+  s3_copy_bucket: !attr |-
+    's3://openmail-model/temp'
+  s3_copy_iam_role: !attr |-
+    arn:aws:iam::accountid:role/redshift_role
 ```
 
 ## Querying databases
