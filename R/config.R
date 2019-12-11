@@ -67,13 +67,20 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
     log_debug('Looking up config for %s', db)
     params <- params[[db]]
 
+    ## check if we need botor package
+    if (any(grepl('aws_', rapply(params, class, how = 'list')))) {
+        if (!requireNamespace('botor', quietly = TRUE)) {
+            stop('Please install the "botor" package to be able to use the AWS-specific configs.')
+        }
+    }
+
     ## hit KMS with each base64-encoded cipher-text (if any) and decrypt
     params <- rapply(params, function(param) {
         switch(
             class(param),
 
             ## decrypt base64-encoded ciphertext via Amazon KMS
-            'aws_kms' = kms_decrypt(param),
+            'aws_kms' = botor::kms_decrypt(param),
 
             ## decrypt file via a data encryption key and Amazon KMS
             'aws_kms_file' = {
@@ -81,7 +88,7 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
                 ## decrypt to tempfile
                 t <- tempfile()
                 on.exit(unlink(t))
-                kms_decrypt_file(param, return = t)
+                botor::kms_decrypt_file(param, return = t)
 
                 ## load R object then cleanup
                 readRDS(t)
@@ -89,7 +96,7 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
             },
 
             ## get value from Amazon Systems Manager's Parameter Store
-            'aws_parameter' = ssm_get_parameter(param),
+            'aws_parameter' = botor::ssm_get_parameter(param),
 
             ## default (no transformation)
             param)},
