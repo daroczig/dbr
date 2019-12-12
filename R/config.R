@@ -1,6 +1,6 @@
 #' Load DB connection parameters
 #'
-#' Load DB connection parameters from a YAML file and decrypt secrets via KMS if found.
+#' Load DB connection parameters from a YAML file and optionally decrypt secrets via Amazon KMS or load values from Amazon System Manager's Parameter Store.
 #'
 #' The YAML file should include all connection parameters, including the Database Driver as an R object, see eg
 #'
@@ -17,6 +17,13 @@
 #'   ...
 #'   password: !aws_kms |
 #'     ciphertext}
+#'
+#' AWS Parameter Store values can be loaded by specifying the \code{aws_parameter} type in the YAML file, such as:
+#'
+#' \preformatted{dbreference:
+#'   ...
+#'   password: !aws_parameter |
+#'     /path/to/value}
 #'
 #' Fields that should not be passed to \code{drv} (eg extra params not used for making the DB connection) should be specified with the \code{attr} type that will be added as attributes to the returned list.
 #' @param db database name reference
@@ -38,21 +45,21 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
         stop(paste('DB config file not found at', db_config_path))
     }
 
+    withclass <- function(class) {
+        force(class)
+        function(x) structure(x, class = class)
+    }
+
     ## parse config file
     params <- yaml.load_file(
         db_config_path,
-        ## add KMS classes
+        ## keep classes
         handlers = list(
-            'aws_kms' = function(x) {
-                assert_botor_available()
-                structure(x, class = c('aws_kms'))
-            },
             ## legacy, use aws_kms instead, remove this in CRAN version
-            'kms'     = function(x) {
-                assert_botor_available()
-                structure(x, class = c('aws_kms'))
-            },
-            'attr'    = function(x) structure(x, class = c('attr'))),
+            'kms'           = withclass('aws_kms'),
+            'aws_kms'       = withclass('aws_kms'),
+            'aws_kms_file'  = withclass('aws_kms_file'),
+            'aws_parameter' = withclass('aws_parameter')),
         eval.expr = TRUE)
 
     hasName(params, db) || stop('Database ', db, ' not found, check ', db_config_path)
@@ -60,8 +67,40 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
     log_debug('Looking up config for %s', db)
     params <- params[[db]]
 
+    ## check if we need botor package
+    if (any(grepl('aws_', rapply(params, class, how = 'list')))) {
+        if (!requireNamespace('botor', quietly = TRUE)) {
+            stop('Please install the "botor" package to be able to use the AWS-specific configs.')
+        }
+    }
+
     ## hit KMS with each base64-encoded cipher-text (if any) and decrypt
-    params <- rapply(params, botor::kms_decrypt, classes = 'aws_kms', how = 'replace')
+    params <- rapply(params, function(param) {
+        switch(
+            class(param),
+
+            ## decrypt base64-encoded ciphertext via Amazon KMS
+            'aws_kms' = botor::kms_decrypt(param),
+
+            ## decrypt file via a data encryption key and Amazon KMS
+            'aws_kms_file' = {
+
+                ## decrypt to tempfile
+                t <- tempfile()
+                on.exit(unlink(t))
+                botor::kms_decrypt_file(param, return = t)
+
+                ## load R object then cleanup
+                readRDS(t)
+
+            },
+
+            ## get value from Amazon Systems Manager's Parameter Store
+            'aws_parameter' = botor::ssm_get_parameter(param),
+
+            ## default (no transformation)
+            param)},
+        how = 'replace')
 
     ## move attr list values from list to attributes
     attributes <- params[sapply(params, class) == 'attr']

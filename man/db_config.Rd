@@ -15,7 +15,7 @@ db_config(db, db_config_path = getOption("dbr.db_config_path"))
 list of database parameters (eg \code{hostname}, \code{port}, \code{username}, \code{password} etc)
 }
 \description{
-Load DB connection parameters from a YAML file and decrypt secrets via KMS if found.
+Load DB connection parameters from a YAML file and optionally decrypt secrets via Amazon KMS or load values from Amazon System Manager's Parameter Store.
 }
 \details{
 The YAML file should include all connection parameters, including the Database Driver as an R object, see eg
@@ -33,6 +33,13 @@ KMS-encrypted secrets should be specified with the \code{aws_kms} type in the YA
   ...
   password: !aws_kms |
     ciphertext}
+
+AWS Parameter Store values can be loaded by specifying the \code{aws_parameter} type in the YAML file, such as:
+
+\preformatted{dbreference:
+  ...
+  password: !aws_parameter |
+    /path/to/value}
 
 Fields that should not be passed to \code{drv} (eg extra params not used for making the DB connection) should be specified with the \code{attr} type that will be added as attributes to the returned list.
 }
