@@ -55,6 +55,7 @@ db_config <- memoise(function(db, db_config_path = getOption('dbr.db_config_path
         db_config_path,
         ## keep classes
         handlers = list(
+            'attr'          = withclass('attr'),
             ## legacy, use aws_kms instead, remove this in CRAN version
             'kms'           = withclass('aws_kms'),
             'aws_kms'       = withclass('aws_kms'),
