@@ -8,18 +8,7 @@ dbr:
           {sql_chunk('dbr.shinydemo.countries.europe', indent_after_linebreak = 2)}
         )
     cities:
-      europe: |-
-        SELECT Name
-        FROM City
-        WHERE CountryCode IN (
-          {sql_chunk('dbr.shinydemo.countries.europe', indent_after_linebreak = 2)})
-      europe_large: |-
-        SELECT Name
-        FROM City
-        WHERE
-          Population > 1000000 AND
-          Name IN (
-            {sql_chunk('dbr.shinydemo.cities.europe', indent_after_linebreak = 4)}))
+      ~!: !include cities.sql
   unittests:
     static: |-
       x

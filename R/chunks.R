@@ -58,9 +58,10 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
         }
     }), recursive = FALSE)
 
-    ## read file chunks
+    ## read SQL bits from files
     chunk <- rapply(chunk, function(chunk) {
 
+        ## normal chunk, exit early
         if (!inherits(chunk, 'include')) {
             return(chunk)
         }
@@ -78,10 +79,18 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
                  paste(file.path(paths, chunk), collapse = ' and '))
         }
 
-        log_trace('Found a chunk file reference for %s at %s', chunk, files)
+        ## chunk defined in a file
         if (isFALSE(file.info(files)$isdir)) {
+            log_trace('Found a file reference for %s at %s', chunk, files)
             return(paste(readLines(files, warn = FALSE), collapse = '\n'))
         }
+
+        ## chunks defined in a folder
+        log_trace('Found a folder reference for %s at %s', chunk, files)
+        files <- list.files(files, full.names = TRUE)
+        setNames(lapply(files, function(file) {
+            paste(readLines(file, warn = FALSE), collapse = '\n')
+        }), sub('\\.sql$', '', basename(files)))
 
     }, how = 'replace')
 
