@@ -32,10 +32,11 @@ sql_chunk_files <- function(file, add = TRUE) {
 #' @export
 #' @importFrom glue glue
 #' @examples \dontrun{
+#' sql_chunk_files(system.file('example_sql_chunks.yaml', package = 'dbr'))
 #' sql_chunk('dbr.shinydemo.countries.count')
 #'
 #' ## pass it right away to a database
-#' countries <- db_query(sql_chunk('dbr.shinydemo.countries.count'), 'shinydemo')
+#' countries <- db_query(sql_chunk('dbr.shinydemo.countries.count'), 'shinydemo')mess
 #'
 #' ## example for a more complex query
 #' cities <- db_query(sql_chunk('dbr.shinydemo.cities.europe'), 'shinydemo')
@@ -43,14 +44,21 @@ sql_chunk_files <- function(file, add = TRUE) {
 #' @importFrom logger log_warn %except%
 sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
 
+    ## path where looking for SQL chunk files
+    paths <- dirname(sql_chunk_files())
+
     ## parse config file(s)
     chunk <- unlist(lapply(sql_chunk_files(), function(chunkfile) {
         if (!file.exists(chunkfile)) {
             log_warn('%s SQL chunk file not found', chunkfile)
         } else {
-            yaml.load_file(chunkfile)
+            yaml.load_file(
+                chunkfile,
+                handlers = list('include' = function(x) structure(x, class = 'include')))
         }
     }), recursive = FALSE)
+
+
 
     for (keyi in strsplit(key, '.', fixed = TRUE)[[1]]) {
 
@@ -60,6 +68,26 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
 
         ## get the SQL chunk
         chunk <- chunk[[keyi]]
+
+        ## read content from chunk file
+        if (inherits(chunk, 'include')) {
+
+            files <- list.files(paths, pattern = '*\\.sql$', full.names = TRUE)
+            files <- files[basename(files) == chunk]
+
+            if (length(files) < 0) {
+                stop('SQL chunk file not found at ',
+                     paste(file.path(paths, chunk), collapse = '; '))
+            }
+
+            if (length(files) > 1) {
+                stop('Multiple SQL chunk files found for ', key, ' at ',
+                     paste(file.path(paths, chunk), collapse = ' and '))
+            }
+
+            chunk <- paste(readLines(files, warn = FALSE), collapse = '\n')
+
+        }
 
     }
 

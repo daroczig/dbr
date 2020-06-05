@@ -2,10 +2,11 @@ dbr:
   shinydemo:
     countries:
       count: SELECT COUNT(*) FROM Country
-      europe: |-
-        SELECT Code
-        FROM Country
-        WHERE Continent = 'Europe'
+      europe: !include europe.sql
+      europe_count: |-
+        SELECT COUNT(*) FROM (
+          {sql_chunk('dbr.shinydemo.countries.europe', indent_after_linebreak = 2)}
+        )
     cities:
       europe: |-
         SELECT Name
@@ -30,4 +31,3 @@ dbr:
       xxx == {x %except% 42} | {sql_chunk('dbr.unittests.nested')}
     nofallback: |-
       y = {y}
-# sql_chunk('dbr.unittests.xx', x= 5)
