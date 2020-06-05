@@ -19,7 +19,7 @@ sql_chunk_files <- function(file, add = TRUE) {
         return(invisible(newchunkfiles))
     }
 
-    chunkfiles
+    unique(chunkfiles)
 
 }
 
