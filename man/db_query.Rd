@@ -4,8 +4,13 @@
 \alias{db_query}
 \title{Execute an SQL query in a database}
 \usage{
-db_query(sql, db, ..., sql_formatter = getOption("dbr.sql_formatter"),
-  output_format = getOption("dbr.output_format"))
+db_query(
+  sql,
+  db,
+  ...,
+  sql_formatter = getOption("dbr.sql_formatter"),
+  output_format = getOption("dbr.output_format")
+)
 }
 \arguments{
 \item{sql}{string}

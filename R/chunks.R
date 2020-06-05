@@ -36,12 +36,12 @@ sql_chunk_files <- function(file, add = TRUE) {
 #' sql_chunk('dbr.shinydemo.countries.count')
 #'
 #' ## pass it right away to a database
-#' countries <- db_query(sql_chunk('dbr.shinydemo.countries.count'), 'shinydemo')mess
+#' countries <- db_query(sql_chunk('dbr.shinydemo.countries.count'), 'shinydemo')
 #'
 #' ## example for a more complex query
 #' cities <- db_query(sql_chunk('dbr.shinydemo.cities.europe'), 'shinydemo')
 #' }
-#' @importFrom logger log_warn %except%
+#' @importFrom logger log_trace log_warn %except%
 sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
 
     ## path where looking for SQL chunk files
@@ -58,7 +58,32 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
         }
     }), recursive = FALSE)
 
+    ## read file chunks
+    chunk <- rapply(chunk, function(chunk) {
 
+        if (!inherits(chunk, 'include')) {
+            return(chunk)
+        }
+
+        files <- list.files(paths, pattern = '*\\.sql$', full.names = TRUE)
+        files <- files[basename(files) == chunk]
+
+        if (length(files) < 0) {
+            stop('SQL chunk file not found at ',
+                 paste(file.path(paths, chunk), collapse = '; '))
+        }
+
+        if (length(files) > 1) {
+            stop('Multiple SQL chunk files found for ', key, ' at ',
+                 paste(file.path(paths, chunk), collapse = ' and '))
+        }
+
+        log_trace('Found a chunk file reference for %s at %s', chunk, files)
+        if (isFALSE(file.info(files)$isdir)) {
+            return(paste(readLines(files, warn = FALSE), collapse = '\n'))
+        }
+
+    }, how = 'replace')
 
     for (keyi in strsplit(key, '.', fixed = TRUE)[[1]]) {
 
@@ -68,26 +93,6 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
 
         ## get the SQL chunk
         chunk <- chunk[[keyi]]
-
-        ## read content from chunk file
-        if (inherits(chunk, 'include')) {
-
-            files <- list.files(paths, pattern = '*\\.sql$', full.names = TRUE)
-            files <- files[basename(files) == chunk]
-
-            if (length(files) < 0) {
-                stop('SQL chunk file not found at ',
-                     paste(file.path(paths, chunk), collapse = '; '))
-            }
-
-            if (length(files) > 1) {
-                stop('Multiple SQL chunk files found for ', key, ' at ',
-                     paste(file.path(paths, chunk), collapse = ' and '))
-            }
-
-            chunk <- paste(readLines(files, warn = FALSE), collapse = '\n')
-
-        }
 
     }
 

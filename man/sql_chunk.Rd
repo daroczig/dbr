@@ -21,6 +21,7 @@ Look up common SQL chunks to be reused in SQL queries
 }
 \examples{
 \dontrun{
+sql_chunk_files(system.file('example_sql_chunks.yaml', package = 'dbr'))
 sql_chunk('dbr.shinydemo.countries.count')
 
 ## pass it right away to a database
