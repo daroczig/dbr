@@ -94,6 +94,9 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
 
     }, how = 'replace')
 
+    ## handle special meaning of `~!` index (moving a level up)
+    chunk <- list_remove_intermediate_level_by_name(chunk, '~!')
+
     for (keyi in strsplit(key, '.', fixed = TRUE)[[1]]) {
 
         if (!hasName(chunk, keyi)) {
@@ -112,4 +115,22 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
     indent_spaces <- paste(rep(' ', indent_after_linebreak), collapse = '')
     gsub('\n', paste0('\n', indent_spaces), chunk)
 
+}
+
+
+#' Remove intermediate list by moving up the children by one level
+#' @param l list
+#' @param n list name of levels to be removed (but keeping children)
+#' @return list
+#' @keywords internal
+#' @examples \dontrun{
+#' l <- list(a = 1, b = list('removeme' = 2))
+#' list_remove_intermediate_level_by_name(l, 'removeme')
+#' }
+list_remove_intermediate_level_by_name <- function(l, n) {
+    if (!is.list(l)) return(l)
+    if (length(l) == 1 && names(l) == n) {
+        return(l[[1]])
+    }
+    return(lapply(l, list_remove_intermediate_level_by_name, n = n))
 }
