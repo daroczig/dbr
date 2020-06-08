@@ -42,6 +42,12 @@ test_that('refresh', {
     expect_true(attr(res, 'when') < attr(db_refresh(res), 'when'))
 })
 
+test_that('tibble', {
+    expect_true(inherits(
+        db_query('select 42', db = 'sqlite', output_format = 'tibble'),
+        'tbl_df'
+    ))
+})
 
 ## #############################################################################
 
