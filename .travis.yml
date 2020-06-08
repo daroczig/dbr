@@ -11,6 +11,9 @@ after_success:
 - Rscript -e 'library(devtools);install();test()'
 - Rscript -e 'covr::codecov()'
 
+after_failure:
+  - cat "${RCHECK_DIR}/00install.out"
+
 before_deploy: Rscript -e 'install.packages("pkgdown")'
 deploy:
   provider: script
