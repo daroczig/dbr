@@ -7,6 +7,9 @@ cache:
 r_packages:
 - devtools
 
+r_github_packages:
+- daroczig/logger
+
 after_success:
 - Rscript -e 'library(devtools);install();test()'
 - Rscript -e 'covr::codecov()'
