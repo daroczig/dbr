@@ -1,0 +1,6 @@
+.editorconfig
+.gitignore
+.lintr
+.*.sh$
+.backup
+.travis.yml
