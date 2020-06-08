@@ -4,8 +4,12 @@ cache:
 - packages
 - pip
 
+before_install:
+  - sudo apt-get -y install libmariadbd-dev libmysqlclient-dev
+
 r_packages:
 - devtools
+- RMySQL
 
 r_github_packages:
 - daroczig/logger
