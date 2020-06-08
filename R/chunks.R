@@ -24,7 +24,9 @@ sql_chunk_files <- function(file, add = TRUE) {
 }
 
 
-#' Look up common SQL chunks to be reused in SQL queries
+#' Look up common SQL chunks from YAML definitions to be reused in SQL queries
+#'
+#' For more details and examples, please see the package \code{README.md}.
 #' @param key key defined in \code{\link{sql_chunk_files}}
 #' @param ... passed to \code{glue} for string interpolation
 #' @param indent_after_linebreak integer for extra indent
