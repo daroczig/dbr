@@ -1,0 +1,20 @@
+language: R
+sudo: false
+cache:
+- packages
+- pip
+
+r_packages:
+- devtools
+
+after_success:
+- Rscript -e 'library(devtools);install();test()'
+- Rscript -e 'covr::codecov()'
+
+before_deploy: Rscript -e 'install.packages("pkgdown")'
+deploy:
+  provider: script
+  script: Rscript -e 'pkgdown::deploy_site_github()'
+  skip_cleanup: true
+  on:
+    branch: master
