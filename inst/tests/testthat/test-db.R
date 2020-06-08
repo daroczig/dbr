@@ -16,6 +16,7 @@ con <- db_connect('sqlite')
 
 context('DB helpers')
 
+con <- db_connect('sqlite')
 test_that('connection', {
     expect_s4_class(con, 'SQLiteConnection')
 })
@@ -25,6 +26,17 @@ test_that('static sql', {
     expect_equal(db_query('select 42', con)[[1]], 42)
     expect_equal(db_query('select 42', db = 'sqlite')[[1]], 42)
 })
+db_close(con)
+
+test_that('cache', {
+    con <- db_connect('sqlite', cache = TRUE)
+    expect_equal(db_query('select 42', db = con)[[1]], 42)
+    expect_equal(db_query('select 42', 'sqlite')[[1]], 42)
+    con <- db_connect('sqlite', cache = FALSE)
+    expect_equal(db_query('select 42', db = con)[[1]], 42)
+    db_close(con)
+})
+
 
 ## #############################################################################
 
@@ -93,6 +105,7 @@ library(glue)
 options('dbr.sql_formatter' = glue)
 .x <- 2
 
+con <- db_connect('sqlite')
 test_that('glueing', {
     expect_equal(db_query('SELECT 42', db = con)[[1]], 42)
     expect_equal(db_query('SELECT {42}', db = con)[[1]], 42)
@@ -101,6 +114,7 @@ test_that('glueing', {
     expect_equal(db_query('SELECT {y + x}', y = 40 , x = 2, db = con)[[1]], 42)
     expect_equal(db_query('SELECT {40 + .x}', db = con)[[1]], 42)
 })
+db_close(con)
 
 ## #############################################################################
 
