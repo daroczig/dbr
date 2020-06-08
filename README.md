@@ -1,5 +1,7 @@
 # dbr: Convenient database connections and queries from R
 
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) ![CRAN](https://www.r-pkg.org/badges/version/dbr) [![Build Status](https://travis-ci.org/daroczig/dbr.svg?branch=master)](https://travis-ci.org/daroczig/dbr) [![Code Coverage](https://codecov.io/gh/daroczig/dbr/branch/master/graph/badge.svg)](https://codecov.io/gh/daroczig/dbr)
+
 Vignette coming, until then, please check the talk presented at the useR! 2018 conference:
 
 * [slides](http://bit.ly/user2018-dbr)
