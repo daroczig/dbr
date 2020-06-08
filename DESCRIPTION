@@ -6,7 +6,7 @@ Authors@R: c(
     person("System1", role = c("fnd"))
     )
 Title: Convenient Database Connections and Queries
-Description: Convenient database connections and queries from R on the top of DBI.
+Description: Convenient helpers for making secure database connections and user-friendly execution of SQL queries from R on the top of DBI.
 Version: 0.1.0.9004
 Date: 2020-06-08
 Encoding: UTF-8
