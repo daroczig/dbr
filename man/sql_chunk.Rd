@@ -2,7 +2,7 @@
 % Please edit documentation in R/chunks.R
 \name{sql_chunk}
 \alias{sql_chunk}
-\title{Look up common SQL chunks to be reused in SQL queries}
+\title{Look up common SQL chunks from YAML definitions to be reused in SQL queries}
 \usage{
 sql_chunk(key, ..., indent_after_linebreak = 0)
 }
@@ -17,10 +17,11 @@ sql_chunk(key, ..., indent_after_linebreak = 0)
 string
 }
 \description{
-Look up common SQL chunks to be reused in SQL queries
+For more details and examples, please see the package \code{README.md}.
 }
 \examples{
 \dontrun{
+sql_chunk_files(system.file('example_sql_chunks.yaml', package = 'dbr'))
 sql_chunk('dbr.shinydemo.countries.count')
 
 ## pass it right away to a database
