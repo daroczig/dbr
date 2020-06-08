@@ -10,7 +10,6 @@ log_layout(example_layout, namespace = 'dbr')
 
 config_path_bak <- getOption('dbr.db_config_path')
 options('dbr.db_config_path' = system.file('example_db_config.yaml', package = 'dbr'))
-con <- db_connect('sqlite')
 
 ## #############################################################################
 
@@ -35,6 +34,12 @@ test_that('cache', {
     con <- db_connect('sqlite', cache = FALSE)
     expect_equal(db_query('select 42', db = con)[[1]], 42)
     db_close(con)
+})
+
+test_that('refresh', {
+    res <- db_query('select 42', db = 'sqlite')
+    expect_equal(db_refresh(res)[[1]], 42)
+    expect_true(attr(res, 'when') < attr(db_refresh(res), 'when'))
 })
 
 
