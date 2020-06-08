@@ -1,6 +1,7 @@
 # dbr (master branch)
 
-No updates since 0.1.0.9004.
+* create `pkgdown` site for documentation
+* better unit-test coverage
 
 # dbr 0.1.0.9004 (2020-06-08)
 
