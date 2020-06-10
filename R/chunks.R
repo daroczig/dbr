@@ -144,5 +144,8 @@ list_remove_intermediate_level_by_name <- function(l, n) {
     if (length(l) == 1 && names(l) == n) {
         return(l[[1]])
     }
+    for (i in which(names(l) == n)) {
+        l <- c(l[-i], l[[i]])
+    }
     return(lapply(l, list_remove_intermediate_level_by_name, n = n))
 }
