@@ -24,27 +24,10 @@ sql_chunk_files <- function(file, add = TRUE) {
 }
 
 
-#' Look up common SQL chunks from YAML definitions to be reused in SQL queries
-#'
-#' For more details and examples, please see the package \code{README.md}.
-#' @param key optional key defined in \code{\link{sql_chunk_files}} to filter for
-#' @param ... passed to \code{glue} for string interpolation
-#' @param indent_after_linebreak integer for extra indent
-#' @return string
+#' Look up all SQL chunks from YAML definitions
+#' @return list
 #' @export
-#' @importFrom glue glue
-#' @examples \dontrun{
-#' sql_chunk_files(system.file('example_sql_chunks.yaml', package = 'dbr'))
-#' sql_chunk('dbr.shinydemo.countries.count')
-#'
-#' ## pass it right away to a database
-#' countries <- db_query(sql_chunk('dbr.shinydemo.countries.count'), 'shinydemo')
-#'
-#' ## example for a more complex query
-#' cities <- db_query(sql_chunk('dbr.shinydemo.cities.europe'), 'shinydemo')
-#' }
-#' @importFrom logger log_trace log_warn %except%
-sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
+sql_chunks <- function() {
 
     ## path where looking for SQL chunk files
     paths <- dirname(sql_chunk_files())
@@ -97,14 +80,34 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
     }, how = 'replace')
 
     ## handle special meaning of `~!` index (moving a level up)
-    chunk <- list_remove_intermediate_level_by_name(chunk, '~!')
+    list_remove_intermediate_level_by_name(chunk, '~!')
 
-    if (missing(key)) {
-        log_warn(paste(
-            'Returning all SQL chunks as a list, ',
-            'some final string interpolations might be missed'))
-        return(chunk)
-    }
+}
+
+
+#' Look up common SQL chunks from YAML definitions to be reused in SQL queries
+#'
+#' For more details and examples, please see the package \code{README.md}.
+#' @param key optional key defined in \code{\link{sql_chunk_files}} to filter for
+#' @param ... passed to \code{glue} for string interpolation
+#' @param indent_after_linebreak integer for extra indent
+#' @return string
+#' @export
+#' @importFrom glue glue
+#' @examples \dontrun{
+#' sql_chunk_files(system.file('example_sql_chunks.yaml', package = 'dbr'))
+#' sql_chunk('dbr.shinydemo.countries.count')
+#'
+#' ## pass it right away to a database
+#' countries <- db_query(sql_chunk('dbr.shinydemo.countries.count'), 'shinydemo')
+#'
+#' ## example for a more complex query
+#' cities <- db_query(sql_chunk('dbr.shinydemo.cities.europe'), 'shinydemo')
+#' }
+#' @importFrom logger log_trace log_warn %except%
+sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
+
+    chunk <- sql_chunks()
 
     for (keyi in strsplit(key, '.', fixed = TRUE)[[1]]) {
 
