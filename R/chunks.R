@@ -27,7 +27,7 @@ sql_chunk_files <- function(file, add = TRUE) {
 #' Look up common SQL chunks from YAML definitions to be reused in SQL queries
 #'
 #' For more details and examples, please see the package \code{README.md}.
-#' @param key key defined in \code{\link{sql_chunk_files}}
+#' @param key optional key defined in \code{\link{sql_chunk_files}} to filter for
 #' @param ... passed to \code{glue} for string interpolation
 #' @param indent_after_linebreak integer for extra indent
 #' @return string
@@ -77,7 +77,7 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
         }
 
         if (length(files) > 1) {
-            stop('Multiple SQL chunk files found for ', key, ' at ',
+            stop('Multiple SQL chunk files found at ',
                  paste(file.path(paths, chunk), collapse = ' and '))
         }
 
@@ -98,6 +98,13 @@ sql_chunk <- function(key, ..., indent_after_linebreak = 0) {
 
     ## handle special meaning of `~!` index (moving a level up)
     chunk <- list_remove_intermediate_level_by_name(chunk, '~!')
+
+    if (missing(key)) {
+        log_warn(paste(
+            'Returning all SQL chunks as a list, ',
+            'some final string interpolations might be missed'))
+        return(chunk)
+    }
 
     for (keyi in strsplit(key, '.', fixed = TRUE)[[1]]) {
 

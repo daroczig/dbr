@@ -7,7 +7,7 @@
 sql_chunk(key, ..., indent_after_linebreak = 0)
 }
 \arguments{
-\item{key}{key defined in \code{\link{sql_chunk_files}}}
+\item{key}{optional key defined in \code{\link{sql_chunk_files}} to filter for}
 
 \item{...}{passed to \code{glue} for string interpolation}
 
