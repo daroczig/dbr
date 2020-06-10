@@ -2,7 +2,7 @@ dbr:
   shinydemo:
     countries:
       count: SELECT COUNT(*) FROM Country
-      europe: !include europe.sql
+      europe: !include europe-sql
       europe_count: |-
         SELECT COUNT(*) FROM (
           {sql_chunk('dbr.shinydemo.countries.europe', indent_after_linebreak = 2)}

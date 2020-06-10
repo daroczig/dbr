@@ -51,7 +51,7 @@ sql_chunks <- function() {
             return(chunk)
         }
 
-        files <- list.files(paths, pattern = '*\\.sql$', full.names = TRUE)
+        files <- list.files(paths, pattern = '*[\\.-]sql$', full.names = TRUE)
         files <- files[basename(files) == chunk]
 
         if (length(files) < 0) {
@@ -75,7 +75,7 @@ sql_chunks <- function() {
         files <- list.files(files, full.names = TRUE)
         setNames(lapply(files, function(file) {
             paste(readLines(file, warn = FALSE), collapse = '\n')
-        }), sub('\\.sql$', '', basename(files)))
+        }), sub('.sql$', '', basename(files)))
 
     }, how = 'replace')
 
