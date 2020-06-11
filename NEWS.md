@@ -2,6 +2,7 @@
 
 * create `pkgdown` site for documentation
 * better unit-test coverage
+* test-phase of Mikata Project integration
 
 # dbr 0.1.0.9004 (2020-06-08)
 
